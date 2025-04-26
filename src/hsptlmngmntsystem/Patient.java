@@ -4,11 +4,11 @@ package hsptlmngmntsystem;
 	import java.util.Scanner;
 
 	public class Patient {
-	    private Connection connection;
+	    private Connection conn;
 	    private Scanner scanner;
 
-	    public Patient(Connection connection, Scanner scanner){
-	        this.connection = connection;
+	    public Patient(Connection conn, Scanner scanner){
+	        this.conn= conn;
 	        this.scanner = scanner;
 	    }
 
@@ -22,7 +22,7 @@ package hsptlmngmntsystem;
 
 	        try{
 	            String query = "INSERT INTO patients(name, age, gender) VALUES(?, ?, ?)";
-	            PreparedStatement preparedStatement = connection.prepareStatement(query);
+	            PreparedStatement preparedStatement = conn.prepareStatement(query);
 	            preparedStatement.setString(1, name);
 	            preparedStatement.setInt(2, age);
 	            preparedStatement.setString(3, gender);
@@ -41,7 +41,7 @@ package hsptlmngmntsystem;
 	    public void viewPatients(){
 	        String query = "select * from patients";
 	        try{
-	            PreparedStatement preparedStatement = connection.prepareStatement(query);
+	            PreparedStatement preparedStatement = conn.prepareStatement(query);
 	            ResultSet resultSet = preparedStatement.executeQuery();
 	            System.out.println("Patients: ");
 	            System.out.println("+------------+--------------------+----------+------------+");
@@ -64,7 +64,7 @@ package hsptlmngmntsystem;
 	    public boolean getPatientById(int id){
 	        String query = "SELECT * FROM patients WHERE id = ?";
 	        try{
-	            PreparedStatement preparedStatement = connection.prepareStatement(query);
+	            PreparedStatement preparedStatement = conn.prepareStatement(query);
 	            preparedStatement.setInt(1, id);
 	            ResultSet resultSet = preparedStatement.executeQuery();
 	            if(resultSet.next()){
@@ -77,6 +77,38 @@ package hsptlmngmntsystem;
 	        }
 	        return false;
 	    }
+	    public void deletePatient() {
+	        System.out.print("Enter Patient ID to delete: ");
+	        int patientId = scanner.nextInt();
+
+	        String checkQuery = "SELECT * FROM patients WHERE id = ?";
+	        String deleteQuery = "DELETE FROM patients WHERE id = ?";
+
+	        try {
+	            // Check if patient exists
+	            PreparedStatement pmst = conn.prepareStatement(checkQuery);
+	            pmst.setInt(1, patientId);
+	            ResultSet rs = pmst.executeQuery();
+
+	            if (rs.next()) {
+	                // If patient exists, delete the record
+	                PreparedStatement deleteStmt = conn.prepareStatement(deleteQuery);
+	                deleteStmt.setInt(1, patientId);
+	                int rowsAffected = deleteStmt.executeUpdate();
+
+	                if (rowsAffected > 0) {
+	                    System.out.println("Patient with ID " + patientId + " has been deleted successfully.");
+	                } else {
+	                    System.out.println("Failed to delete patient.");
+	                }
+	            } else {
+	                System.out.println("Patient with ID " + patientId + " does not exist.");
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    }
+
 
 	}
 

@@ -19,10 +19,11 @@ public class Doctor {
     public void addDoctor(){
         System.out.print("Enter Doctor Id: ");
         int id = scanner.nextInt();
+        scanner.nextLine(); 
         System.out.print("Enter Doctor Name: ");
-        String name = scanner.next();
+        String name = scanner.nextLine();
         System.out.print("Enter Specialization: ");
-        String specialization = scanner.next();
+        String specialization = scanner.nextLine();
 
         try{
             String query = "INSERT INTO doctors(id,name,specialization) VALUES(?, ?, ?)";
@@ -32,7 +33,7 @@ public class Doctor {
             preparedStatement.setString(3, specialization);
             int affectedRows = preparedStatement.executeUpdate();
             if(affectedRows>0){
-                System.out.println("Patient Added Successfully!!");
+                System.out.println("Doctor Added Successfully!!");
             }else{
                 System.out.println("Failed to add Patient!!");
             }
